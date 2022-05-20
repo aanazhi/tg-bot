@@ -1,8 +1,10 @@
 import telebot
 from telebot import types
-from keyboa import Keyboa
+
 
 bot = telebot.TeleBot("5279468538:AAHrsEL4ORg9E0GkLhFS49UeonwT5wDqPfI")
+
+#РАЙОООООООООООООООООН
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
@@ -12,19 +14,40 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, "Я не так давно в Санкт-Петербурге и знаю пока только 12 районов. Но мои мамы скоро добавят остальные остальные 6 :)")
         distr = ["Адмиралтейский", "Василеостровский", "Выборгский", "Калининский",
                  "Кировский", "Красногвардейский", "Московский", "Невский",
-                 "Петроградский", "Приморский", "Фрунзенский" ,"Центральный"]
-        kb_distr = Keyboa(items=distr) #copy_text_to_callback=True
-        bot.send_message(chat_id=message.from_user.id, text="Выбери район:", reply_markup=kb_distr)
-        while number == 0:
-            try:
-                number = int(message.text) and 1 <= number <= 12
-            except Exception:
-                bot.send_message(message.from_user.id, "Цифрами, пожалуйста")
+                 "Петроградский", "Приморский", "Фрунзенский" ,"Центральный", "Не имеет значение"]
+        markup = telebot.types.InlineKeyboardMarkup()
+        for i in range(len(distr)):
+            markup.add(telebot.types.InlineKeyboardButton(text=distr[i], callback_data=distr[i]))
+        bot.send_message(message.from_user.id, text="Выбери район", reply_markup=markup)
 
     elif message.text == "/help":
         bot.send_message(message.from_user.id, "Напиши привет")
     else:
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
+
+@bot.callback_query_handler(func=lambda call: True)
+def query_handler(call):
+    bot.answer_callback_query(callback_query_id=call.id, text='Ой!')
+    global call.data
+    global answer
+    answer = ''
+    bot.send_message(call.message.chat.id, call.data)
+
+@bot.message_handler(content_types=['text'])
+def cost():
+    if answer != 0:
+        bot.send_message(message.from_user.id, "Привет")
+    else:
+        bot.send_message(message.from_user.id, "Пока")
+
+
+#ЦЕНАААААААААААааа
+
+
+
+
+
+
 
 
 bot.polling(none_stop=True, interval=0)
