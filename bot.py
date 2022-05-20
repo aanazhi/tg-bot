@@ -1,14 +1,26 @@
 import telebot
 from telebot import types
+from keyboa import Keyboa
 
 bot = telebot.TeleBot("5279468538:AAHrsEL4ORg9E0GkLhFS49UeonwT5wDqPfI")
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
+    global number
     if message.text == "Привет" or message.text == "привет":
         bot.send_message(message.from_user.id, "Привет")
         bot.send_message(message.from_user.id, "Я не так давно в Санкт-Петербурге и знаю пока только 12 районов. Но мои мамы скоро добавят остальные остальные 6 :)")
-        bot.send_message(message.from_user.id, "Выбери район\n")
+        distr = ["Адмиралтейский", "Василеостровский", "Выборгский", "Калининский",
+                 "Кировский", "Красногвардейский", "Московский", "Невский",
+                 "Петроградский", "Приморский", "Фрунзенский" ,"Центральный"]
+        kb_distr = Keyboa(items=distr) #copy_text_to_callback=True
+        bot.send_message(chat_id=message.from_user.id, text="Выбери район:", reply_markup=kb_distr)
+        while number == 0:
+            try:
+                number = int(message.text) and 1 <= number <= 12
+            except Exception:
+                bot.send_message(message.from_user.id, "Цифрами, пожалуйста")
+
     elif message.text == "/help":
         bot.send_message(message.from_user.id, "Напиши привет")
     else:
@@ -16,10 +28,6 @@ def get_text_messages(message):
 
 
 bot.polling(none_stop=True, interval=0)
-
-
-
-
 
 
 
